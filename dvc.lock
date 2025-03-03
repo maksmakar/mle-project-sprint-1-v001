@@ -1,0 +1,79 @@
+schema: '2.0'
+stages:
+  get_data:
+    cmd: python part2_dvc/scripts/data.py
+    deps:
+    - path: part2_dvc/scripts/data.py
+      hash: md5
+      md5: 6bd78bb4bb804f79ad3fc259c93badd3
+      size: 1638
+    params:
+      params.yaml:
+        index_col: id
+        retrain: true
+    outs:
+    - path: part2_dvc/data/initial_data.csv
+      hash: md5
+      md5: b2c0f25144492f54e243322008e1e5bb
+      size: 12407646
+      cloud:
+        my_storage:
+          etag: b2c0f25144492f54e243322008e1e5bb
+          version_id: 00062F7588D7F765
+  fit_model:
+    cmd: python part2_dvc/scripts/fit.py
+    deps:
+    - path: part2_dvc/data/initial_data.csv
+      hash: md5
+      md5: b2c0f25144492f54e243322008e1e5bb
+      size: 12407646
+    - path: part2_dvc/scripts/fit.py
+      hash: md5
+      md5: 307fa8caadbe0bcbdfb13c8040ea5a04
+      size: 2061
+    params:
+      params.yaml:
+        early_stopping_rounds: 100
+        index_col: id
+        one_hot_drop: if_binary
+        retrain: true
+        target_col: price
+    outs:
+    - path: part2_dvc/models/fitted_model.pkl
+      hash: md5
+      md5: 7f805e89b9e7c02b0f1aff432dcc9c99
+      size: 1115298
+      cloud:
+        my_storage:
+          etag: 7f805e89b9e7c02b0f1aff432dcc9c99
+          version_id: 00062F7588D915D0
+  evaluate_model:
+    cmd: python part2_dvc/scripts/evaluate.py
+    deps:
+    - path: part2_dvc/models/fitted_model.pkl
+      hash: md5
+      md5: 7f805e89b9e7c02b0f1aff432dcc9c99
+      size: 1115298
+    - path: part2_dvc/scripts/evaluate.py
+      hash: md5
+      md5: 1bbcda7fbead2f2f0f9cbdb04cfc4e84
+      size: 1052
+    params:
+      params.yaml:
+        index_col: id
+        metrics:
+        - neg_mean_squared_error
+        - r2
+        n_jobs: -1
+        n_splits: 5
+        retrain: true
+        target_col: price
+    outs:
+    - path: part2_dvc/cv_results/cv_res.json
+      hash: md5
+      md5: 94df29dbf0789c2f6909c37d7f1fc3d0
+      size: 113
+      cloud:
+        my_storage:
+          etag: 94df29dbf0789c2f6909c37d7f1fc3d0
+          version_id: 00062F7588D87E77
