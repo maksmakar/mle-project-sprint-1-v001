@@ -34,7 +34,7 @@ def prediction_price_etl():
         print(PLUGIN_PATH)
         import sqlalchemy
         from sqlalchemy import (MetaData, Table, 
-                                Column, String, Integer, BigInteger,
+                                Column, String, Integer, Numeric,
                                 Float, Boolean, 
                                 DateTime, UniqueConstraint, inspect)
         
@@ -53,7 +53,7 @@ def prediction_price_etl():
             Column('rooms', Integer),
             Column('studio', Boolean),
             Column('total_area', Float),
-            Column('price', BigInteger),
+            Column('price', Numeric),
             Column('building_id', String),
             Column('build_year', String),
             Column('building_type_int', String),

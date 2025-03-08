@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from category_encoders import CatBoostEncoder
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
 from catboost import CatBoostRegressor
 import yaml
 import os
@@ -24,13 +24,11 @@ def fit_model():
 
     binary_cat_features = cat_features[potential_binary_features[potential_binary_features].index]
     other_cat_features = cat_features[potential_binary_features[~potential_binary_features].index]
-    num_features = data.select_dtypes(['float'])
 
     preprocessor = ColumnTransformer(
         [
         ('binary', OneHotEncoder(drop='if_binary'), binary_cat_features.columns.tolist()),
         ('cat', CatBoostEncoder(return_df=False), other_cat_features.columns.tolist()),
-        ('num', StandardScaler(), num_features.columns.tolist())
         ],
         remainder='drop',
         verbose_feature_names_out=False
@@ -45,7 +43,6 @@ def fit_model():
     ]
     )
     pipeline.fit(data, data['price']) 
-
 
     # сохраните обученную модель в models/fitted_model.pkl
     os.makedirs('part2_dvc/models', exist_ok=True)
