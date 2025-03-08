@@ -31,7 +31,7 @@ def clean_prediction_price_etl():
     @task()
     def create_table():
 
-        from sqlalchemy import (Table, Column, DateTime, Float, BigInteger,
+        from sqlalchemy import (Table, Column, DateTime, Float, Numeric,
                                 Integer, Index, MetaData, Boolean,
                                 String, UniqueConstraint, inspect)
         
@@ -49,7 +49,7 @@ def clean_prediction_price_etl():
             Column('living_area', Float),
             Column('rooms', Integer),
             Column('total_area', Float),
-            Column('price', BigInteger),
+            Column('price', Numeric),
             Column('building_id', String),
             Column('build_year', String),
             Column('building_type_int', String),
@@ -80,7 +80,7 @@ def clean_prediction_price_etl():
     
         # Избавляемся от дубликатов
         feature_cols = data.columns.drop('id').tolist()
-        is_duplicated_features = data.duplicated(subset=feature_cols, keep=False)
+        is_duplicated_features = data.duplicated(subset=feature_cols, keep='first')
         data = data[~is_duplicated_features].reset_index(drop=True)
         # Столбец studio содержит только одно значение, поэтому он будет бесполезен при обучении
         data.drop('studio', axis=1, inplace=True)

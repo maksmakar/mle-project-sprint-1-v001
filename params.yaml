@@ -6,5 +6,5 @@ one_hot_drop: 'if_binary'
 early_stopping_rounds: 100
 random_seed: 42
 n_splits: 5
-metrics: ['neg_mean_squared_error', 'r2']
+metrics: ['neg_mean_squared_error', 'r2', 'neg_mean_absolute_percentage_error']
 n_jobs: -1

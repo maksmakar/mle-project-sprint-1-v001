@@ -13,16 +13,18 @@ def evaluate_model():
         
     with open('part2_dvc/models/fitted_model.pkl', 'rb') as fd:
         model = joblib.load(fd)
-    data = pd.read_csv('part2_dvc/data/initial_data.csv')   
+    data = pd.read_csv('part2_dvc/data/initial_data.csv') 
 
-    cv_strategy = StratifiedKFold(n_splits=5)
+    target_col = params['target_col']  
+
+    cv_strategy = StratifiedKFold(n_splits=params['n_splits'])
     cv_res = cross_validate(
         model,
         data,
-        data['price'],
+        data[target_col],
         cv=cv_strategy,
-        n_jobs=-1,
-        scoring=['neg_mean_squared_error', 'r2']
+        n_jobs=params['n_jobs'],
+        scoring=params['metrics']
     )
     for key, value in cv_res.items():
         cv_res[key] = round(value.mean(), 3) 
@@ -31,7 +33,6 @@ def evaluate_model():
     os.makedirs('part2_dvc/cv_results', exist_ok=True)
     with open('part2_dvc/cv_results/cv_res.json', 'w') as fp:
         json.dump(cv_res, fp)
-
 
 if __name__ == '__main__':
 	evaluate_model()
